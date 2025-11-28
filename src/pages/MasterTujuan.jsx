@@ -1,7 +1,7 @@
 // src/pages/MasterTujuan.jsx
 
 import React, { useEffect, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 // Hapus 'apiFetch' dari services
 import Modal from '../components/Modal';
@@ -55,6 +55,22 @@ const MasterTujuan = () => {
     }
   };
 
+  const handleDelete = async (tujuan) => {
+    if (!window.confirm(`Apakah Anda yakin ingin menghapus tujuan "${tujuan.nama}" (${tujuan.id})?`)) {
+      return;
+    }
+
+    try {
+      await apiFetch(`/tujuan/${tujuan.id}`, {
+        method: 'DELETE'
+      });
+      showMessage('Tujuan berhasil dihapus', 'success');
+      loadTujuan();
+    } catch (error) {
+      console.error("Gagal hapus tujuan:", error);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -87,12 +103,23 @@ const MasterTujuan = () => {
                   <td className="py-3 px-6 text-sm font-medium text-gray-800">{item.nama}</td>
                   <td className="py-3 px-6 text-sm text-gray-700">{item.tipe}</td>
                   <td className="py-3 px-6 text-sm">
-                    <button 
-                      onClick={() => handleOpenModal(item)} 
-                      className="text-indigo-600 hover:text-indigo-800"
-                    >
-                      Edit
-                    </button>
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        onClick={() => handleOpenModal(item)} 
+                        className="text-indigo-600 hover:text-indigo-800 font-medium"
+                        disabled={isLoading}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item)} 
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                        disabled={isLoading}
+                        title="Hapus tujuan"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

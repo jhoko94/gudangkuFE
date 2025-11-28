@@ -1,7 +1,7 @@
 // src/pages/MasterBarang.jsx
 
 import React, { useEffect, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 // Hapus 'apiFetch' dari services
 import Modal from '../components/Modal';
@@ -51,6 +51,23 @@ const MasterBarang = () => {
     }
   };
 
+  const handleDelete = async (barang) => {
+    if (!window.confirm(`Apakah Anda yakin ingin menghapus barang "${barang.nama}" (${barang.id})?`)) {
+      return;
+    }
+
+    try {
+      await apiFetch(`/barang/${barang.id}`, {
+        method: 'DELETE'
+      });
+      showMessage('Barang berhasil dihapus', 'success');
+      loadBarang();
+    } catch (error) {
+      // Error sudah ditangani oleh context, tapi kita bisa tambahkan pesan khusus
+      console.error("Gagal hapus barang:", error);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -87,12 +104,23 @@ const MasterBarang = () => {
                   <td className="py-3 px-6 text-sm text-gray-700">{item.satuan}</td>
                   <td className="py-3 px-6 text-sm text-gray-700">{item.batasMin}</td>
                   <td className="py-3 px-6 text-sm">
-                    <button 
-                      onClick={() => handleOpenModal(item)} 
-                      className="text-indigo-600 hover:text-indigo-800"
-                    >
-                      Edit
-                    </button>
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        onClick={() => handleOpenModal(item)} 
+                        className="text-indigo-600 hover:text-indigo-800 font-medium"
+                        disabled={isLoading}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item)} 
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                        disabled={isLoading}
+                        title="Hapus barang"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

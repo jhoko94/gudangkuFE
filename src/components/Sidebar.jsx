@@ -62,7 +62,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         {/* Grup Navigasi: Transaksi */}
         <h3 className="mt-4 px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Transaksi</h3>
         <SidebarLink to="/po" icon={FileText} onClick={handleLinkClick}>
-          Purchase Order (PO)
+          Pesanan (PO)
         </SidebarLink>
         <SidebarLink to="/inbound" icon={ArrowDownLeft} onClick={handleLinkClick}>
           Terima Barang
@@ -73,9 +73,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         
         {/* Grup Navigasi: Stok */}
         <h3 className="mt-4 px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Stok</h3>
-        <SidebarLink to="/stok" icon={Archive} onClick={handleLinkClick}>
+        <NavLink
+          to="/stok"
+          end
+          onClick={handleLinkClick}
+          className={({ isActive }) => 
+            `flex items-center px-3 py-2.5 rounded-lg font-medium transition duration-200 hover:bg-gray-700 hover:text-white ${
+              isActive ? 'bg-indigo-700 text-white' : ''
+            }`
+          }
+        >
+          <Archive className="w-5 h-5 mr-3" />
           Kartu Stok
-        </SidebarLink>
+        </NavLink>
         {/* <SidebarLink to="/stok/opname" icon={ClipboardCheck} onClick={handleLinkClick}>
           Stok Opname
         </SidebarLink> */}

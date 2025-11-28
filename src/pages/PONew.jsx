@@ -98,7 +98,7 @@ const PONew = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Buat Purchase Order Baru</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">Buat Pesanan Baru</h1>
       <form onSubmit={handleSubmit}>
         <div className="bg-white p-6 md:p-8 rounded-xl shadow-md border border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

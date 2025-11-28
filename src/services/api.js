@@ -20,7 +20,32 @@ export async function baseApiFetch(url, options = {}) {
             };
         }
 
-        const response = await fetch(API_BASE_URL + url, options);
+        let response;
+        try {
+            response = await fetch(API_BASE_URL + url, options);
+        } catch (fetchError) {
+            // Network error - backend tidak berjalan atau tidak bisa diakses
+            if (fetchError.name === 'TypeError' && fetchError.message.includes('fetch')) {
+                throw new Error(`Tidak dapat terhubung ke backend. Pastikan server backend berjalan di ${API_BASE_URL.replace('/api', '')}. Jalankan: cd gudangkuBE && npm run dev`);
+            }
+            throw fetchError;
+        }
+        
+        // Cek Content-Type untuk memastikan respons adalah JSON
+        const contentType = response.headers.get('content-type');
+        const isJson = contentType && contentType.includes('application/json');
+        
+        // Jika respons bukan JSON (misalnya HTML error page), beri pesan error yang jelas
+        if (!isJson) {
+            const text = await response.text();
+            // Jika server mengembalikan HTML, kemungkinan endpoint tidak ada atau server error
+            if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+                throw new Error(`Server mengembalikan HTML bukan JSON. Pastikan backend berjalan di ${API_BASE_URL.replace('/api', '')} dan endpoint ${url} tersedia.`);
+            }
+            throw new Error(`Respons tidak valid (${response.status}): ${response.statusText}`);
+        }
+        
+        // Parse JSON hanya jika Content-Type adalah JSON
         const data = await response.json();
         
         if (!response.ok) {
